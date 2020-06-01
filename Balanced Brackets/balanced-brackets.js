@@ -61,8 +61,6 @@ function isBalanced(s) {
 
   const stack = [];
 
-  if (s === "") return "NO";
-
   if (s.length % 2 !== 0) return "NO";
 
   if (s[0] in brackets.close && s[s.length - 1] in brackets.open) return "NO";
