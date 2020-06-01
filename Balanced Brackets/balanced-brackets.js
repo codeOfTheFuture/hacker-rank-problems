@@ -69,33 +69,42 @@ function isBalanced(s) {
 
   for (let i = 0; i < s.length; i++) {
     if (s[i] in brackets.open) stack.push(s[i]);
+    else if (s[i] in brackets.pipes) {
+      if (!s[i + 1] in brackets.close) stack.push(s[i]);
+      if (s[i - 1] in brackets.open && s[i + 1] in brackets.close) return "NO";
+    }
 
     let current = stack.pop();
     let next = s[i + 1];
 
     if (current in brackets.open) {
-      if (next in brackets.open) stack.push(current);
+      if (next in brackets.open || next in brackets.pipes) stack.push(current);
       if (next in brackets.close) {
         if (next !== brackets["open"][current]) return "NO";
       }
-    }
-
-    if (!current) {
+    } else if (current in brackets.pipes) {
+      if (next in brackets.open) stack.push(current);
+      if (next in brackets.close) return "NO";
+    } else if (!current) {
       if (next in brackets.close) return "NO";
     }
   }
-  if (stack.length === 0) {
-    return "YES";
-  } else {
-    return "NO";
-  }
+
+  return stack.length === 0 ? "YES" : "NO";
 }
 
-console.log(isBalanced("")); // YES
 console.log(isBalanced("(")); // NO
 console.log(isBalanced("))")); // NO
+console.log(isBalanced("({)}")); // NO
 console.log(isBalanced("()")); // YES
-console.log(isBalanced("}{[()]}{")); // YES
+console.log(isBalanced("}{[()]}{")); // NO
 console.log(isBalanced("{[(])}")); // NO
 console.log(isBalanced("[{{()}}]")); // YES
 console.log(isBalanced("({[]{}})")); // YES
+
+console.log(isBalanced("||")); // YES
+console.log(isBalanced("(|)")); // NO
+console.log(isBalanced("(|)|")); // NO
+console.log(isBalanced("(|[]{}|)")); // YES
+console.log(isBalanced("|(|[]{}|)|")); // YES
+console.log(isBalanced("()()||{}[]||")); // YES
